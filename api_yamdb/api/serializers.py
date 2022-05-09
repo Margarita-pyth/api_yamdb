@@ -18,10 +18,6 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('__all__')
         read_only_fields = ('role',)
 
-    class Meta:
-        fields = ("username", "email")
-        model = User
-
 
 class RegisterSerializer(serializers.ModelSerializer):
     username = serializers.CharField(
