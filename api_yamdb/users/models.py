@@ -14,12 +14,15 @@ class User(AbstractUser):
     ]
 
     username = models.TextField('Имя пользователя', max_length=100,
-                                unique=True, requared=True)
-    email = models.EmailField('Почта', unique=True, requared=True)
+                                unique=True)
+    email = models.EmailField('Почта', unique=True)
     role = models.CharField('Роль пользователя', max_length=100,
                             choices=ROLE, default=USER)
     bio = models.TextField(verbose_name='О себе', null=True,
                             blank=True)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
 
     @property
     def is_user(self):
@@ -33,6 +36,3 @@ class User(AbstractUser):
     @property
     def is_admin(self):
         return self.role == self.ADMIN
-
-    def __str__(self):
-        return self.username

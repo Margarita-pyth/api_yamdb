@@ -10,12 +10,18 @@ class UserSerializer(serializers.ModelSerializer):
                     ], required=True,)
     email = serializers.EmailField(
         validators=[UniqueValidator(queryset=User.objects.all())
-                    ], required=True,
+                    ],
     )
 
     class Meta:
         model = User
         fields = ('__all__')
+
+
+class UserEditSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ('__all__')
+        model = User
         read_only_fields = ('role',)
 
 
@@ -30,6 +36,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             UniqueValidator(queryset=User.objects.all())
         ]
     )
+
 
     def validate_username(self, value):
         if value.lower() == "me":
