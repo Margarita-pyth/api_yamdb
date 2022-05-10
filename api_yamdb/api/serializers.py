@@ -3,6 +3,8 @@ from users.models import User
 from rest_framework.validators import UniqueValidator
 from rest_framework import permissions
 
+from reviews.models import Category, Genre, Title
+
 
 class UserSerializer(serializers.ModelSerializer):
     username = serializers.CharField(
@@ -50,3 +52,21 @@ class IsAdmin(permissions.BasePermission):
 class TokenSerializer(serializers.Serializer):
     username = serializers.CharField()
     confirmation_code = serializers.CharField()
+
+
+class CategorySerializer(serializers.ModelSerialize):
+    class Meta:
+        fields = ('name', 'slug')
+        model = Category
+
+
+class GenreSerializer(serializers.ModelSerialize):
+    class Meta:
+        fields = ('name', 'slug')
+        model = Genre
+
+
+class TitleSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = '__all__'
+        model = Title
