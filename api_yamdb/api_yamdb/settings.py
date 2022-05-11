@@ -22,9 +22,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'django_filters',
     'rest_framework_simplejwt',
-    'djoser',
+    'django_filters',
     'reviews',
     'api',
     'users',
@@ -95,7 +94,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
 
-DEFAULT_FROM_EMAIL = 'example@yamdb.ru'
+DEFAULT_FROM_EMAIL = 'example@com.ru'
 
 
 REST_FRAMEWORK = {
@@ -104,7 +103,10 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
-    ]
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.'
+                                'PageNumberPagination',
+    "PAGE_SIZE": 10,    
 }
 
 
@@ -129,4 +131,5 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/'),)
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=365),
+    'AUTH_HEADER_TYPES': ('Bearer',),
 }

@@ -5,6 +5,7 @@ from rest_framework import permissions
 
 
 class UserSerializer(serializers.ModelSerializer):
+    role = serializers.StringRelatedField(read_only=True)
     username = serializers.CharField(
         validators=[UniqueValidator(queryset=User.objects.all())
                     ], required=True,)
@@ -18,34 +19,18 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('__all__')
 
 
-class UserEditSerializer(serializers.ModelSerializer):
-    class Meta:
-        fields = ('__all__')
-        model = User
-        read_only_fields = ('role',)
-
-
 class RegisterSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(
-        validators=[
-            UniqueValidator(queryset=User.objects.all())
-        ]
-    )
-    email = serializers.EmailField(
-        validators=[
-            UniqueValidator(queryset=User.objects.all())
-        ]
-    )
 
+    class Meta:
+        model = User
+        fields = ('username', 'email',)
 
     def validate_username(self, value):
-        if value.lower() == "me":
-            raise serializers.ValidationError("Выберите другой логин")
+        if value == 'me':
+            raise serializers.ValidationError(
+                'Выберите другой логин.'
+            )
         return value
-
-    class Meta:
-        fields = ("username", "email")
-        model = User
 
 
 class IsAdmin(permissions.BasePermission):
@@ -57,3 +42,16 @@ class IsAdmin(permissions.BasePermission):
 class TokenSerializer(serializers.Serializer):
     username = serializers.CharField()
     confirmation_code = serializers.CharField()
+
+    class Meta:
+        model = User
+        fields = ('username', 'confirmation_code')
+
+
+class AdminUserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = (
+            'username', 'email', 'first_name', 'last_name', 'bio', 'role',
+        )
