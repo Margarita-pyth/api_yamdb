@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from rest_framework import serializers
 from users.models import User
 from rest_framework.validators import UniqueValidator
@@ -54,13 +56,13 @@ class TokenSerializer(serializers.Serializer):
     confirmation_code = serializers.CharField()
 
 
-class CategorySerializer(serializers.ModelSerialize):
+class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('name', 'slug')
         model = Category
 
 
-class GenreSerializer(serializers.ModelSerialize):
+class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('name', 'slug')
         model = Genre
@@ -70,3 +72,13 @@ class TitleSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Title
+
+    def validate(self, attrs):
+        # user = self.context.get('request').user
+        # following = attrs.get('following')
+        title = attrs.get('title')
+        if title.year > datetime.year:
+            raise serializers.ValidationError(
+                'Будущее еще не наступило!'
+            )
+        return attrs
