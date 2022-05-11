@@ -1,9 +1,49 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
+from rest_framework import filters, viewsets
+from rest_framework.pagination import LimitOffsetPagination
 
-from reviews.models import Review
-from api.serializers import ReviewSerializer, CommentSerializer
-from api.permissions import IsAdminModeratorOwnerOrReadOnly
+from reviews.models import Category, Genre, Title, Review
+from api.serializers import (CategorySerializer,
+                             GenreSerializer,
+                             TitleSerializer,
+                             ReviewSerializer,
+                             CommentSerializer)
+from api.permissions import AdminOrReadOnly, IsAdminModeratorOwnerOrReadOnly
+from api.mixins import CreatListDeleteViewSet, NoPutViewSet, PermissionsViewSet
+
+
+class CategoryViewSet(CreatListDeleteViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+    permission_classes = (AdminOrReadOnly,)
+    pagination_class = LimitOffsetPagination
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+
+    # удалять категорию (и жанр) не по id, а по slug.
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
+
+
+class GenreViewSet(CreatListDeleteViewSet):
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+
+    permission_classes = (AdminOrReadOnly,)
+    pagination_class = LimitOffsetPagination
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+
+
+class TitleViewSet(NoPutViewSet, PermissionsViewSet):
+    queryset = Title.objects.all()
+    serializer_class = TitleSerializer
+
+    permission_classes = (AdminOrReadOnly,)
+    pagination_class = LimitOffsetPagination
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name', 'year', 'genre__slug', 'category__slug',)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):

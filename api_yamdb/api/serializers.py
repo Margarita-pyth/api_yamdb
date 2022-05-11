@@ -1,46 +1,39 @@
+from datetime import datetime
 from rest_framework import permissions, serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.validators import UniqueValidator
 from users.models import User
-from reviews.models import Comment, Review, Title
+from reviews.models import Category, Genre, Comment, Review, Title
 
 
 class UserSerializer(serializers.ModelSerializer):
+    role = serializers.StringRelatedField(read_only=True)
     username = serializers.CharField(
         validators=[UniqueValidator(queryset=User.objects.all())
                     ], required=True,)
     email = serializers.EmailField(
         validators=[UniqueValidator(queryset=User.objects.all())
-                    ], required=True,
+                    ],
     )
 
     class Meta:
         model = User
         fields = ('__all__')
-        read_only_fields = ('role',)
 
 
 class RegisterSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(
-        validators=[
-            UniqueValidator(queryset=User.objects.all())
-        ]
-    )
-    email = serializers.EmailField(
-        validators=[
-            UniqueValidator(queryset=User.objects.all())
-        ]
-    )
-
-    def validate_username(self, value):
-        if value.lower() == "me":
-            raise serializers.ValidationError("Выберите другой логин")
-        return value
 
     class Meta:
-        fields = ("username", "email")
         model = User
+        fields = ('username', 'email',)
+
+    def validate_username(self, value):
+        if value == 'me':
+            raise serializers.ValidationError(
+                'Выберите другой логин.'
+            )
+        return value
 
 
 class IsAdmin(permissions.BasePermission):
@@ -52,6 +45,47 @@ class IsAdmin(permissions.BasePermission):
 class TokenSerializer(serializers.Serializer):
     username = serializers.CharField()
     confirmation_code = serializers.CharField()
+
+    class Meta:
+        model = User
+        fields = ('username', 'confirmation_code')
+
+
+class AdminUserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = (
+            'username', 'email', 'first_name', 'last_name', 'bio', 'role',
+        )
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ('name', 'slug')
+        model = Category
+
+
+class GenreSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ('name', 'slug')
+        model = Genre
+
+
+class TitleSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = '__all__'
+        model = Title
+
+    def validate(self, attrs):
+        # user = self.context.get('request').user
+        # following = attrs.get('following')
+        title = attrs.get('title')
+        if title.year > datetime.year:
+            raise serializers.ValidationError(
+                'Будущее еще не наступило!'
+            )
+        return attrs
 
 
 class ReviewSerializer(serializers.ModelSerializer):
