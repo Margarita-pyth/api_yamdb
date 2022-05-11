@@ -10,6 +10,8 @@ from api.serializers import (CategorySerializer,
                              CommentSerializer)
 from api.permissions import AdminOrReadOnly, IsAdminModeratorOwnerOrReadOnly
 from api.mixins import CreatListDeleteViewSet, NoPutViewSet, PermissionsViewSet
+# from rest_framework.response import Response
+# from rest_framework import status
 
 
 class CategoryViewSet(CreatListDeleteViewSet):
@@ -22,8 +24,18 @@ class CategoryViewSet(CreatListDeleteViewSet):
     search_fields = ('name',)
 
     # удалять категорию (и жанр) не по id, а по slug.
-    def destroy(self, request, *args, **kwargs):
-        return super().destroy(request, *args, **kwargs)
+    # def destroy(self, request, *args, **kwargs):
+    #    slug = self.kwargs.get('slug')
+    #    id = Category.objects.filter(slug=slug)
+    #    instance = get_object_or_404(Category, id=id)
+    #    self.perform_destroy(instance)
+    #    return Response(status=status.HTTP_204_NO_CONTENT)
+
+    # def perform_destroy(self, instance):
+    #    slug = self.kwargs.get('slug')
+    #    id = Category.objects.filter(slug=slug)
+    #    category = get_object_or_404(Category, id=id)
+    #    instance.delete(category)
 
 
 class GenreViewSet(CreatListDeleteViewSet):

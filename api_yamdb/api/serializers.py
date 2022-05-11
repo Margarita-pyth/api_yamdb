@@ -1,4 +1,4 @@
-from datetime import datetime
+# from datetime import datetime
 from rest_framework import permissions, serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
@@ -73,19 +73,26 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class TitleSerializer(serializers.ModelSerializer):
+    genre = serializers.SlugRelatedField(
+        slug_field='name',
+        read_only=True
+    )
+    category = serializers.SlugRelatedField(
+        slug_field='name',
+        read_only=True
+    )
+
     class Meta:
         fields = '__all__'
         model = Title
 
-    def validate(self, attrs):
-        # user = self.context.get('request').user
-        # following = attrs.get('following')
-        title = attrs.get('title')
-        if title.year > datetime.year:
-            raise serializers.ValidationError(
-                'Будущее еще не наступило!'
-            )
-        return attrs
+    # def validate(self, attrs):
+    #    title = attrs.get('title')
+    #    if title.year > datetime.year:
+    #        raise serializers.ValidationError(
+    #            'Будущее еще не наступило!'
+    #        )
+    #    return attrs
 
 
 class ReviewSerializer(serializers.ModelSerializer):
