@@ -1,7 +1,11 @@
+from datetime import datetime
+
 from rest_framework import serializers
 from users.models import User
 from rest_framework.validators import UniqueValidator
 from rest_framework import permissions
+
+from reviews.models import Category, Genre, Title
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -55,3 +59,31 @@ class AdminUserSerializer(serializers.ModelSerializer):
         fields = (
             'username', 'email', 'first_name', 'last_name', 'bio', 'role',
         )
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ('name', 'slug')
+        model = Category
+
+
+class GenreSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ('name', 'slug')
+        model = Genre
+
+
+class TitleSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = '__all__'
+        model = Title
+
+    def validate(self, attrs):
+        # user = self.context.get('request').user
+        # following = attrs.get('following')
+        title = attrs.get('title')
+        if title.year > datetime.year:
+            raise serializers.ValidationError(
+                'Будущее еще не наступило!'
+            )
+        return attrs

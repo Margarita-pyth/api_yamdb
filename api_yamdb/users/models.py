@@ -18,9 +18,7 @@ class User(AbstractUser):
     email = models.EmailField('Почта', unique=True)
     role = models.CharField('Роль пользователя', max_length=100,
                             choices=ROLE, default=USER)
-    bio = models.TextField(verbose_name='О себе', null=True,
-                           blank=True)
-
+    bio = models.TextField(verbose_name='О себе', null=True, blank=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 

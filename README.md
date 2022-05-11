@@ -1,2 +1,3 @@
 # api_yamdb
-proj
+api_yamdb
+оформление ридми
