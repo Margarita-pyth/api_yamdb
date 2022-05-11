@@ -19,6 +19,8 @@ class User(AbstractUser):
     role = models.CharField('Роль пользователя', max_length=100,
                             choices=ROLE, default=USER)
     bio = models.TextField(verbose_name='О себе', null=True, blank=True)
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
 
     @property
     def is_user(self):
@@ -32,6 +34,3 @@ class User(AbstractUser):
     @property
     def is_admin(self):
         return self.role == self.ADMIN
-
-    def __str__(self):
-        return self.username
