@@ -16,10 +16,3 @@ class CreatListDeleteViewSet(
     viewsets.GenericViewSet,
 ):
     pass
-
-
-class NoPutViewSet(
-    CreatListDeleteViewSet,
-    mixins.UpdateModelMixin,
-):
-    pass
