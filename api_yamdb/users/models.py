@@ -14,8 +14,8 @@ class User(AbstractUser):
     ]
 
     username = models.TextField('Имя пользователя', max_length=100,
-                                unique=True, requared=True)
-    email = models.EmailField('Почта', unique=True, requared=True)
+                                unique=True)
+    email = models.EmailField('Почта', unique=True)
     role = models.CharField('Роль пользователя', max_length=100,
                             choices=ROLE, default=USER)
     bio = models.TextField(verbose_name='О себе', null=True,
