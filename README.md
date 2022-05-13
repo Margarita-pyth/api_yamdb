@@ -50,6 +50,22 @@ python3 manage.py runserver
 
 После запуска сервера можно ознакомится с документацией по проекту, в которой описана основная логика приложения, документация доступна по ссылке: http://127.0.0.1:8000/redoc/
 
+
+## Как загрузить данные в проект:
+
+Запустить файл csv2json.py в консоли, находясь в директории /c/Dev/api_yamdb/api_yamdb:
+
+```sh
+python csv2json.py
+```
+
+Выполнить команду в консоли:
+
+```sh
+python manage.py loaddata reviews/fixtures/*.json
+```
+
+
 ### Пользовательские роли
  - Аноним — может просматривать описания произведений, читать отзывы и комментарии.
  - Аутентифицированный пользователь (user) — может читать всё, как и Аноним, может публиковать отзывы и ставить оценки произведениям (фильмам/книгам/песенкам), может комментировать отзывы; может редактировать и удалять свои отзывы и комментарии, редактировать свои оценки произведений. Эта роль присваивается по умолчанию каждому новому пользователю.
@@ -70,15 +86,14 @@ python3 manage.py runserver
 После этого пользователь должен самостоятельно отправить свой email и username на эндпоинт /api/v1/auth/signup/ , в ответ ему должно прийти письмо с кодом подтверждения.
  - Далее пользователь отправляет POST-запрос с параметрами username и confirmation_code на эндпоинт /api/v1/auth/token/, в ответе на запрос ему приходит token (JWT-токен), как и при самостоятельной регистрации.
 
- ## | Ресурсы сервиса API YaMDb |
- 
-| AUTH | аутентификация] [/api/v1/auth/signup/] |
-| USERS | [пользователи] [/api/v1/users/] |
-| TITLES | [произведения] [/api/v1/titles/] |
-| CATEGORIES | [категории произведений] [/api/v1/categories/] |
-| GENRES | [жанры произведений] [/api/v1/genres/] |
-| REVIEWS | [отзывы на произведения] [/api/v1/titles/{title_id}/reviews/] |
-| COMMENTS | [комментарии к отзывам] [/api/v1/titles/{title_id}/reviews/{review_id}/comments/] |
+ ## Ресурсы сервиса API YaMDb
+- auth: аутентификация.
+- users: пользователи.
+- titles: произведения, к которым пишут отзывы (определённый фильм, книга или песенка).
+- categories: категории (типы) произведений («Фильмы», «Книги», «Музыка»).
+- genres: жанры произведений. Одно произведение может быть привязано к нескольким жанрам.
+- reviews: отзывы на произведения. Отзыв привязан к определённому произведению.
+- comments: комментарии к отзывам. Комментарий привязан к определённому отзыву.
 
 ## License
 **Подготовлено командой разработчиков: 
@@ -142,6 +157,21 @@ python3 manage.py runserver
 
 After starting the server, you can get acquainted with the project documentation, which describes the main logic of the application, the documentation is available at the link: http://127.0.0.1:8000/redoc/
 
+
+## How to upload data to a project
+
+Run the file csv2json.py in the console, located in the directory /c/Dev/api_yamdb/api_yamdb:
+
+```sh
+python csv2json.py
+```
+
+Run the command in the console:
+
+```sh
+python manage.py loaddata reviews/fixtures/*.json
+```
+
 ### User roles
  - Anonymous — can view descriptions of works, read reviews and comments.
  - Authenticated user (user) — can read everything, as well as Anonymous, can publish reviews and rate works (films / books / songs), can comment on reviews; can edit and delete their reviews and comments, edit their ratings of works. This role is assigned by default to each new user.
@@ -162,16 +192,15 @@ After starting the server, you can get acquainted with the project documentation
 After that, the user must independently send his email and username to the endpoint /api/v1/auth/signup/, in response he should receive an email with a confirmation code.
  - Next, the user sends a POST request with the username and confirmation_code parameters to the endpoint /api/v1/auth/token/, in response to the request, he receives a token (JWT token), as with self-registration.
 
- ## | Resources of the YaMDb API service |
+ ## Resources of the YaMDb API service
+- auth: authentication.
+- users: users.
+- titles: works that are reviewed (a certain movie, book or song).
+- categories: categories (types) of works ("Movies", "Books", "Music").
+- genres: genres of works. One work can be linked to several genres.
+- reviews: reviews of works. The review is tied to a specific work.
+- comments: comments on reviews. The comment is linked to a specific review.
  
-| AUTH | authentication] [/api/v1/auth/signup/] |
-| USERS | [users] [/api/v1/users/] |
-| TITLES | [works] [/api/v1/titles/] |
-| CATEGORIES | [categories of works] [/api/v1/categories/] |
-| GENRES | [genres of works] [/api/v1/genres/] |
-| REVIEWS | [reviews of works] [/api/v1/titles/{title_id}/reviews/] |
-| COMMENTS | [comments on reviews] [/api/v1/titles/{title_id}/reviews/{review_id}/comments/] |
-
 ## License
 **Prepared by the development team: 
 
