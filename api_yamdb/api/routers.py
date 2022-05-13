@@ -6,7 +6,7 @@ class CustomRouter(SimpleRouter):
         Route(
             url=r'^{prefix}{trailing_slash}$',
             mapping={
-                'get': 'list', 
+                'get': 'list',
                 'post': 'create'
             },
             name='{basename}-list',
