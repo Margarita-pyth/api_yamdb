@@ -1,16 +1,20 @@
+from datetime import datetime
+
 from django.shortcuts import get_object_or_404
-from rest_framework import filters, viewsets
+from rest_framework import filters, viewsets, serializers
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.pagination import PageNumberPagination
+from django_filters.rest_framework import DjangoFilterBackend
 
 from reviews.models import Category, Genre, Title, Review
 from api.serializers import (CategorySerializer,
                              GenreSerializer,
-                             TitleSerializer,
+                             TitlePostSerializer,
+                             TitleGetSerializer,
                              ReviewSerializer,
                              CommentSerializer)
 from api.permissions import AdminOrReadOnly, IsAdminModeratorOwnerOrReadOnly, NoPut
-from api.mixins import CreatListDeleteViewSet, PermissionsViewSet
+from api.mixins import CreatListDeleteViewSet
+from api.filters import GenreFilterSet
 
 
 class CategoryViewSet(CreatListDeleteViewSet):
@@ -37,13 +41,24 @@ class GenreViewSet(CreatListDeleteViewSet):
 
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
-    serializer_class = TitleSerializer
 
     permission_classes = (AdminOrReadOnly, NoPut)
-    # pagination_class = LimitOffsetPagination
-    pagination_class = PageNumberPagination
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('name', 'year', 'genre__slug', 'category__slug',)
+    pagination_class = LimitOffsetPagination
+    filter_backends = (DjangoFilterBackend,)
+    filter_class = GenreFilterSet
+
+    def get_serializer_class(self):
+        if self.action in ('list', 'retrieve'):
+            return TitleGetSerializer
+        return TitlePostSerializer 
+    
+    def perform_create(self, serializer):
+        year = self.request.data.get('year')
+        if int(year) > datetime.now().year:
+            raise serializers.ValidationError(
+                'Будущее еще не наступило!'
+            )
+        serializer.save()
 
 
 class ReviewViewSet(viewsets.ModelViewSet):

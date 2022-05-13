@@ -70,7 +70,7 @@ def token(request):
 
     token = AccessToken.for_user(user)
     return Response(
-        {'token': str(token.access_token)}, status=status.HTTP_200_OK
+        {'token': str(token)}, status=status.HTTP_200_OK
     )
 
 

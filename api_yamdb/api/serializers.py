@@ -1,5 +1,4 @@
 from datetime import datetime
-from jinja2 import TemplateRuntimeError
 from rest_framework import permissions, serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
@@ -73,12 +72,14 @@ class GenreSerializer(serializers.ModelSerializer):
         model = Genre
 
 
-class TitleSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(
-        read_only=True
+class TitlePostSerializer(serializers.ModelSerializer):
+    category = serializers.SlugRelatedField(
+        queryset=Category.objects.all(),
+        slug_field='slug'
     )
-    genre = GenreSerializer(
-        read_only=True,
+    genre = serializers.SlugRelatedField(
+        queryset=Genre.objects.all(),
+        slug_field='slug',
         many=True
     )
 
@@ -86,15 +87,19 @@ class TitleSerializer(serializers.ModelSerializer):
         fields = '__all__'
         model = Title
 
-    # def validate(self, attrs):
-        # user = self.context.get('request').user
-        # following = attrs.get('following')
-        # title = attrs.get('title')
-        # if title.year > datetime.year:
-        #    raise serializers.ValidationError(
-        #        'Будущее еще не наступило!'
-        #    )
-        # return attrs
+
+class TitleGetSerializer(serializers.ModelSerializer):
+    category = CategorySerializer(
+        read_only=True
+    )
+    genre = GenreSerializer(
+        read_only=True,
+        many=True,
+    )
+
+    class Meta:
+        fields = '__all__'
+        model = Title
 
 
 class ReviewSerializer(serializers.ModelSerializer):

@@ -22,11 +22,9 @@ class Title(models.Model):
     name = models.TextField()
     year = models.IntegerField()
     description = models.TextField(blank=True)
-    genre = models.ForeignKey(
+    genre = models.ManyToManyField(
         Genre,
-        on_delete=models.SET_NULL,
-        related_name='title',
-        null=True,
+        through='GenreTitle',
         blank=False,
     )
     category = models.ForeignKey(
@@ -39,6 +37,11 @@ class Title(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class GenreTitle(models.Model):
+    title = models.ForeignKey(Title, on_delete=models.CASCADE)
+    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
 
 
 class Review(models.Model):
