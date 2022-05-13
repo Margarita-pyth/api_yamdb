@@ -1,34 +1,37 @@
+from datetime import datetime
+
 from django.shortcuts import get_object_or_404
-from rest_framework import filters, viewsets
+from rest_framework import filters, viewsets, serializers
 from rest_framework.pagination import LimitOffsetPagination
+from django_filters.rest_framework import DjangoFilterBackend
 
 from reviews.models import Category, Genre, Title, Review
 from api.serializers import (CategorySerializer,
                              GenreSerializer,
-                             TitleSerializer,
+                             TitlePostSerializer,
+                             TitleGetSerializer,
                              ReviewSerializer,
                              CommentSerializer)
-from api.permissions import AdminOrReadOnly, IsAdminModeratorOwnerOrReadOnly
-from api.mixins import CreatListDeleteViewSet, NoPutViewSet, PermissionsViewSet
+from api.permissions import AdminOrReadOnly, IsAdminModeratorOwnerOrReadOnly, NoPut
+from api.mixins import CreatListDeleteViewSet
+from api.filters import GenreFilterSet
 
 
 class CategoryViewSet(CreatListDeleteViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    lookup_field = 'slug'
 
     permission_classes = (AdminOrReadOnly,)
     pagination_class = LimitOffsetPagination
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
-
-    # удалять категорию (и жанр) не по id, а по slug.
-    def destroy(self, request, *args, **kwargs):
-        return super().destroy(request, *args, **kwargs)
 
 
 class GenreViewSet(CreatListDeleteViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+    lookup_field = 'slug'
 
     permission_classes = (AdminOrReadOnly,)
     pagination_class = LimitOffsetPagination
@@ -36,14 +39,26 @@ class GenreViewSet(CreatListDeleteViewSet):
     search_fields = ('name',)
 
 
-class TitleViewSet(NoPutViewSet, PermissionsViewSet):
+class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
-    serializer_class = TitleSerializer
 
-    permission_classes = (AdminOrReadOnly,)
+    permission_classes = (AdminOrReadOnly, NoPut)
     pagination_class = LimitOffsetPagination
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('name', 'year', 'genre__slug', 'category__slug',)
+    filter_backends = (DjangoFilterBackend,)
+    filter_class = GenreFilterSet
+
+    def get_serializer_class(self):
+        if self.action in ('list', 'retrieve'):
+            return TitleGetSerializer
+        return TitlePostSerializer 
+    
+    def perform_create(self, serializer):
+        year = self.request.data.get('year')
+        if int(year) > datetime.now().year:
+            raise serializers.ValidationError(
+                'Будущее еще не наступило!'
+            )
+        serializer.save()
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
