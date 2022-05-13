@@ -12,7 +12,9 @@ from api.serializers import (CategorySerializer,
                              TitleGetSerializer,
                              ReviewSerializer,
                              CommentSerializer)
-from api.permissions import AdminOrReadOnly, IsAdminOrReadOnly, IsAdminModeratorOwnerOrReadOnly, NoPut
+from api.permissions import (AdminOrReadOnly,
+                             IsAdminOrReadOnly,
+                             IsAdminModeratorOwnerOrReadOnly)
 from api.mixins import CreatListDeleteViewSet
 from api.filters import GenreFilterSet
 

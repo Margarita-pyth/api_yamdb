@@ -1,10 +1,9 @@
-from datetime import datetime
 from rest_framework import permissions, serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.validators import UniqueValidator
+from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
-from reviews.models import Category, Genre, Comment, Review, Title
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -108,12 +107,16 @@ class TitleGetSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    title = serializers.SlugRelatedField(
+        slug_field='name',
+        read_only=True,
+    )
     author = serializers.SlugRelatedField(
         slug_field='username',
         read_only=True)
 
     class Meta:
-        fields = ('id', 'text', 'author', 'score', 'pub_date')
+        fields = ('id', 'title', 'text', 'author', 'score', 'pub_date')
         model = Review
 
     def validate(self, data):
