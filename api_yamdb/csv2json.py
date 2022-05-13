@@ -6,6 +6,7 @@ from api_yamdb.settings import BASE_DIR
 
 path_csv_files = os.path.join(BASE_DIR, 'static\\data\\')
 path_fixtures_files = os.path.join(BASE_DIR, 'reviews\\fixtures\\')
+os.mkdir(path_fixtures_files)
 csv_files = os.listdir(path_csv_files)
 file_model_dict = {
     "category.csv": "reviews.Category",
