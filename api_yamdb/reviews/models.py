@@ -10,6 +10,7 @@ class Category(models.Model):
     def __str__(self):
         return self.slug
 
+
 class Genre(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=50, unique=True)
@@ -45,7 +46,7 @@ class GenreTitle(models.Model):
 
 
 class Review(models.Model):
-    title_id = models.ForeignKey(
+    title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
         related_name='reviews'
@@ -64,6 +65,14 @@ class Review(models.Model):
     )
     pub_date = models.DateTimeField(
         'Дата публикации отзыва', auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['title', 'author'],
+                name='unique_review'
+            ),
+        ]
 
     def __str__(self):
         return self.text[:15]

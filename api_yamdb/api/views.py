@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from rest_framework import filters, viewsets, serializers
 from rest_framework.pagination import LimitOffsetPagination
@@ -12,7 +12,7 @@ from api.serializers import (CategorySerializer,
                              TitleGetSerializer,
                              ReviewSerializer,
                              CommentSerializer)
-from api.permissions import AdminOrReadOnly, IsAdminModeratorOwnerOrReadOnly, NoPut
+from api.permissions import AdminOrReadOnly, IsAdminOrReadOnly, IsAdminModeratorOwnerOrReadOnly, NoPut
 from api.mixins import CreatListDeleteViewSet
 from api.filters import GenreFilterSet
 
@@ -40,9 +40,12 @@ class GenreViewSet(CreatListDeleteViewSet):
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all()
+    queryset = Title.objects.all().annotate(
+        Avg("reviews__score")
+    ).order_by("name")
 
-    permission_classes = (AdminOrReadOnly, NoPut)
+    # permission_classes = (AdminOrReadOnly, NoPut)
+    permission_classes = (IsAdminOrReadOnly,)
     pagination_class = LimitOffsetPagination
     filter_backends = (DjangoFilterBackend,)
     filter_class = GenreFilterSet
@@ -50,8 +53,8 @@ class TitleViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
             return TitleGetSerializer
-        return TitlePostSerializer 
-    
+        return TitlePostSerializer
+
     def perform_create(self, serializer):
         year = self.request.data.get('year')
         if int(year) > datetime.now().year:
