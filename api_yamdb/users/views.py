@@ -1,18 +1,17 @@
 from .models import User
-from django.shortcuts import get_object_or_404
-from django.contrib.auth.tokens import default_token_generator
-from django.core.mail import send_mail
-from api.serializers import UserSerializer, TokenSerializer
-from api.serializers import RegisterSerializer, AdminUserSerializer
-from rest_framework import viewsets, status
-from rest_framework.response import Response
-from rest_framework.decorators import action, api_view, permission_classes
-from rest_framework_simplejwt.tokens import AccessToken
 from api.serializers import IsAdmin
-from rest_framework import filters, status, viewsets
+from api.serializers import RegisterSerializer, AdminUserSerializer
+from api.serializers import UserSerializer, TokenSerializer
+from rest_framework_simplejwt.tokens import AccessToken
+from django.contrib.auth.tokens import default_token_generator
+from django.shortcuts import get_object_or_404
+from django.core.mail import send_mail
+from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework import viewsets, status, filters
+from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from api_yamdb.settings import DEFAULT_FROM_EMAIL
 from rest_framework.pagination import PageNumberPagination
+from api_yamdb.settings import DEFAULT_FROM_EMAIL
 
 
 class UserViewSet(viewsets.ModelViewSet):

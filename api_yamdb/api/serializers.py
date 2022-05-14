@@ -1,9 +1,10 @@
+from datetime import datetime
+from users.models import User
+from reviews.models import Category, Comment, Genre, Review, Title
 from rest_framework import permissions, serializers
 from rest_framework.exceptions import ValidationError
-from rest_framework.generics import get_object_or_404
 from rest_framework.validators import UniqueValidator
-from reviews.models import Category, Comment, Genre, Review, Title
-from users.models import User
+from rest_framework.generics import get_object_or_404
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -71,7 +72,7 @@ class GenreSerializer(serializers.ModelSerializer):
         model = Genre
 
 
-class TitlePostSerializer(serializers.ModelSerializer):
+class TitleWriteSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(
         queryset=Category.objects.all(),
         slug_field='slug'
@@ -86,8 +87,16 @@ class TitlePostSerializer(serializers.ModelSerializer):
         fields = '__all__'
         model = Title
 
+    def perform_create(self, serializer):
+        year = self.request.data.get('year')
+        if int(year) > datetime.now().year:
+            raise serializers.ValidationError(
+                'Будущее еще не наступило!'
+            )
+        serializer.save()
 
-class TitleGetSerializer(serializers.ModelSerializer):
+
+class TitleReadSerializer(serializers.ModelSerializer):
     rating = serializers.IntegerField(
         source='reviews__score__avg', read_only=True
     )

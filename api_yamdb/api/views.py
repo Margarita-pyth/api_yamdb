@@ -1,25 +1,24 @@
-from datetime import datetime
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
-from rest_framework import filters, viewsets, serializers
+from rest_framework import filters, viewsets
 from rest_framework.pagination import LimitOffsetPagination
 from django_filters.rest_framework import DjangoFilterBackend
 
 from reviews.models import Category, Genre, Title, Review
 from api.serializers import (CategorySerializer,
                              GenreSerializer,
-                             TitlePostSerializer,
-                             TitleGetSerializer,
+                             TitleWriteSerializer,
+                             TitleReadSerializer,
                              ReviewSerializer,
                              CommentSerializer)
 from api.permissions import (AdminOrReadOnly,
                              IsAdminOrReadOnly,
                              IsAdminModeratorOwnerOrReadOnly)
-from api.mixins import CreatListDeleteViewSet
+from api.mixins import CreateListDeleteViewSet
 from api.filters import GenreFilterSet
 
 
-class CategoryViewSet(CreatListDeleteViewSet):
+class CategoryViewSet(CreateListDeleteViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     lookup_field = 'slug'
@@ -30,7 +29,7 @@ class CategoryViewSet(CreatListDeleteViewSet):
     search_fields = ('name',)
 
 
-class GenreViewSet(CreatListDeleteViewSet):
+class GenreViewSet(CreateListDeleteViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     lookup_field = 'slug'
@@ -46,7 +45,6 @@ class TitleViewSet(viewsets.ModelViewSet):
         Avg("reviews__score")
     ).order_by("name")
 
-    # permission_classes = (AdminOrReadOnly, NoPut)
     permission_classes = (IsAdminOrReadOnly,)
     pagination_class = LimitOffsetPagination
     filter_backends = (DjangoFilterBackend,)
@@ -54,16 +52,8 @@ class TitleViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
-            return TitleGetSerializer
-        return TitlePostSerializer
-
-    def perform_create(self, serializer):
-        year = self.request.data.get('year')
-        if int(year) > datetime.now().year:
-            raise serializers.ValidationError(
-                'Будущее еще не наступило!'
-            )
-        serializer.save()
+            return TitleReadSerializer
+        return TitleWriteSerializer
 
 
 class ReviewViewSet(viewsets.ModelViewSet):

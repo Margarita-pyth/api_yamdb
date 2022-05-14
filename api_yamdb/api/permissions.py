@@ -41,10 +41,3 @@ class AdminOrReadOnly(permissions.BasePermission):
                 and (request.user.is_admin or request.user.is_superuser)
             )
         )
-
-
-class NoPut(permissions.BasePermission):
-    message = 'Метод "PUT" не доступен, попробуйте "PATCH".'
-
-    def has_object_permission(self, request, view, obj):
-        return not (view.action == "update")
