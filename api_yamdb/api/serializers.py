@@ -89,8 +89,8 @@ class TitleWriteSerializer(serializers.ModelSerializer):
         model = Title
 
     def validate_year(self, value):
-        year = timezone.now().year
-        if int(year) > datetime.now().year:
+        current_year = timezone.now().year
+        if not 0 <= value <= current_year:
             raise serializers.ValidationError(
                 'Будущее еще не наступило!'
             )
