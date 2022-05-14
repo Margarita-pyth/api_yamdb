@@ -1,4 +1,3 @@
-from datetime import datetime
 from django.utils import timezone
 from users.models import User
 from reviews.models import Category, Comment, Genre, Review, Title
