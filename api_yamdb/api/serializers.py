@@ -1,4 +1,5 @@
 from datetime import datetime
+from django.utils import timezone
 from users.models import User
 from reviews.models import Category, Comment, Genre, Review, Title
 from rest_framework import permissions, serializers
@@ -87,13 +88,13 @@ class TitleWriteSerializer(serializers.ModelSerializer):
         fields = '__all__'
         model = Title
 
-    def perform_create(self, serializer):
-        year = self.request.data.get('year')
+    def validate_year(self, value):
+        year = timezone.now().year
         if int(year) > datetime.now().year:
             raise serializers.ValidationError(
                 'Будущее еще не наступило!'
             )
-        serializer.save()
+        return value
 
 
 class TitleReadSerializer(serializers.ModelSerializer):
