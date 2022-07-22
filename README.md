@@ -26,7 +26,7 @@ Cоздать и активировать виртуальное окружен�
 
 ```sh
 python3 -m venv env
-source venv/Scripts/activate
+source env/Scripts/activate
 ```
 
 Установить зависимости из файла requirements.txt:
@@ -133,7 +133,7 @@ Create and activate a virtual environment:
 
 ```sh
 python3 -m venv env
-source venv/Scripts/activate
+source env/Scripts/activate
 ```
 
 Install dependencies from a file requirements.txt:
