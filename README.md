@@ -17,7 +17,7 @@
 
 Клонировать репозиторий и перейти в него в командной строке:
 ```sh
-git clone https://github.com/Margarita-pyth/api_yamdb/
+git clone https://github.com/Margarita-pyth/api_yamdb.git
 cd api_yamdb
 ```
 
@@ -124,7 +124,7 @@ The list of categories can be expanded by the administrator.
 
 Clone the repository and go to it on the command line:
 ```sh
-git clone https://github.com/Margarita-pyth/api_yamdb/
+git clone https://github.com/Margarita-pyth/api_yamdb.git
 cd api_yamdb
 ```
 
